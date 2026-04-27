@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maara — Kingsley Gunatillake</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #1a1a1a;
+      --bg-alt: #1e1e1e;
+      --text:   #f0ebe4;
+      --muted:  #7a746f;
+      --accent: #c8c3bc;
+      --dim:    rgba(240,235,228,0.65);
+      --border: rgba(240,235,228,0.1);
+      --pad:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    em { font-style: italic; }
+
+    /* ─── NAV ─────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px var(--pad);
+      background: rgba(22, 22, 22, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-left, .nav-right {
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .nav-right { color: var(--accent); }
+
+    /* ─── HERO ────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .hero img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(26,26,26,0.1)  0%,
+        rgba(26,26,26,0.0)  35%,
+        rgba(26,26,26,0.6)  75%,
+        rgba(26,26,26,0.96) 100%
+      );
+    }
+    .hero-text {
+      position: absolute;
+      bottom: 72px;
+      left: var(--pad);
+    }
+
+    /* eyebrow fades in first */
+    .hero-text .eyebrow {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(240, 235, 228, 0.75);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    /* Maara: letter-spacing expand + fade */
+    .hero-text h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(64px, 9vw, 128px);
+      line-height: 0.9;
+      color: var(--text);
+      opacity: 0;
+      animation: maaraReveal 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+    }
+    .hero-text h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    /* artist name slides up last */
+    .hero-text .artist-name {
+      display: block;
+      margin-top: 24px;
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.4s forwards;
+    }
+
+    @keyframes maaraReveal {
+      from { opacity: 0; letter-spacing: -0.06em; }
+      to   { opacity: 1; letter-spacing: -0.01em; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 80px; right: var(--pad);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 2s forwards;
+    }
+    .scroll-hint::after {
+      content: '';
+      display: block;
+      width: 1px; height: 56px;
+      background: var(--muted);
+      animation: tickDown 1.7s ease-in-out 2s infinite;
+    }
+    @keyframes tickDown {
+      0%   { transform: scaleY(0); transform-origin: top;    opacity: 1; }
+      50%  { transform: scaleY(1); transform-origin: top;    opacity: 1; }
+      100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+    }
+
+    /* ─── SHARED SECTION ──────────────────── */
+    .section      { padding: 112px var(--pad); }
+    .section--tight { padding: 72px var(--pad); }
+
+    /* ─── DIVIDER ─────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0 var(--pad);
+    }
+
+    /* ─── TEXT BLOCK: label | body ────────── */
+    .text-block {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .text-block__label {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding-top: 6px;
+      line-height: 1.9;
+    }
+    .text-block__body { max-width: 680px; }
+    .text-block__body h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(30px, 3.8vw, 52px);
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 32px;
+    }
+    .text-block__body p {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.95;
+      color: var(--dim);
+      margin-bottom: 22px;
+    }
+    .text-block__body p:last-child { margin-bottom: 0; }
+
+    /* ─── META ROW ────────────────────────── */
+    .meta-row {
+      display: flex;
+      gap: 56px;
+      margin-top: 48px;
+      padding-top: 36px;
+      border-top: 1px solid var(--border);
+    }
+    .meta-item span {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .meta-item strong {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    /* ─── FULL BLEED IMAGE ────────────────── */
+    .img-full {
+      position: relative;
+      height: 88vh;
+      overflow: hidden;
+    }
+    .img-full img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+    }
+    .img-full__caption {
+      position: absolute;
+      bottom: 40px; right: var(--pad);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(240,235,228,0.4);
+    }
+
+    /* ─── SPLIT: text + image ─────────────── */
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      align-items: stretch;
+    }
+    .split--reverse { direction: rtl; }
+    .split--reverse > * { direction: ltr; }
+    .split__text {
+      padding: 72px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--bg-alt);
+    }
+    .split__text .split-label {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .split__text p {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.95;
+      color: var(--dim);
+      margin-bottom: 20px;
+    }
+    .split__text p:last-child { margin-bottom: 0; }
+    .split__img {
+      overflow: hidden;
+      min-height: 560px;
+    }
+    .split__img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ─── PULL QUOTE ──────────────────────── */
+    .pull-quote {
+      padding: 96px var(--pad);
+      text-align: center;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .pull-quote blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: clamp(26px, 3.8vw, 54px);
+      line-height: 1.3;
+      color: var(--text);
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .pull-quote blockquote em {
+      color: var(--accent);
+    }
+
+    /* ─── TEXT CENTERED ───────────────────── */
+    .text-centered {
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .text-centered .eyebrow {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 32px;
+    }
+    .text-centered p {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.95;
+      color: var(--dim);
+      margin-bottom: 22px;
+    }
+    .text-centered p:last-child { margin-bottom: 0; }
+
+    /* ─── CONCLUSION ──────────────────────── */
+    .conclusion {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .conclusion .eyebrow {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 32px;
+    }
+    .conclusion p {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 2;
+      color: var(--dim);
+      margin-bottom: 24px;
+    }
+    .conclusion p:last-child { margin-bottom: 0; }
+
+    /* ─── IMAGE GRIDS ─────────────────────── */
+    .grid-item {
+      overflow: hidden;
+      cursor: pointer;
+      background: #222;
+      position: relative;
+    }
+    .grid-item::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(26,26,26,0);
+      transition: background 0.4s ease;
+    }
+    .grid-item:hover::after { background: rgba(26,26,26,0.18); }
+    .grid-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .grid-item:hover img { transform: scale(1.04); }
+
+    .ar-43  { aspect-ratio: 4/3; }
+    .ar-34  { aspect-ratio: 3/4; }
+    .ar-11  { aspect-ratio: 1/1; }
+    .ar-219 { aspect-ratio: 21/9; }
+    .ar-169 { aspect-ratio: 16/9; }
+
+    .grid-2col {
+      display: grid;
+      gap: 4px;
+    }
+    .g-66  { grid-template-columns: 1fr 1fr; }
+    .g-75  { grid-template-columns: 7fr 5fr; }
+    .g-57  { grid-template-columns: 5fr 7fr; }
+
+    .grid-3col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 4px;
+    }
+
+    .grid-asym {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 4px;
+    }
+    .ga-7  { grid-column: span 7; }
+    .ga-5  { grid-column: span 5; }
+    .ga-8  { grid-column: span 8; }
+    .ga-4  { grid-column: span 4; }
+    .ga-6  { grid-column: span 6; }
+    .ga-12 { grid-column: span 12; }
+
+    /* ─── LIGHTBOX ────────────────────────── */
+    .lightbox {
+      display: none;
+      position: fixed; inset: 0;
+      z-index: 999;
+      background: rgba(18,18,18,0.97);
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      display: block;
+    }
+    .lb-close {
+      position: absolute;
+      top: 32px; right: var(--pad);
+      background: none; border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 300;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer;
+      transition: color 0.2s;
+    }
+    .lb-close:hover { color: var(--text); }
+    .lb-nav {
+      position: absolute;
+      top: 50%; transform: translateY(-50%);
+      background: none; border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 300;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted); cursor: pointer;
+      padding: 24px; transition: color 0.2s;
+    }
+    .lb-nav:hover { color: var(--text); }
+    .lb-prev { left: 24px; }
+    .lb-next { right: 24px; }
+    .lb-counter {
+      position: absolute;
+      bottom: 32px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; letter-spacing: 0.14em; color: var(--muted);
+    }
+
+    /* ─── FADE-IN ON SCROLL ───────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* ─── FOOTER ──────────────────────────── */
+    footer {
+      padding: 48px var(--pad);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+    }
+    .footer-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 300;
+      letter-spacing: 0.04em;
+    }
+    .footer-series {
+      font-size: 11px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent);
+    }
+    .footer-copy {
+      font-size: 11px; letter-spacing: 0.12em; color: var(--muted);
+    }
+
+    /* ─── RESPONSIVE ──────────────────────── */
+    @media (max-width: 900px) {
+      :root { --pad: 24px; }
+      nav { padding: 20px var(--pad); }
+      .section { padding: 72px var(--pad); }
+      .section--tight { padding: 48px var(--pad); }
+      .scroll-hint { display: none; }
+
+      .text-block { grid-template-columns: 1fr; gap: 24px; }
+      .text-block__label { padding-top: 0; }
+
+      .split { grid-template-columns: 1fr; }
+      .split--reverse { direction: ltr; }
+      .split__text { padding: 48px var(--pad); }
+      .split__img { min-height: 320px; }
+
+      .g-66, .g-75, .g-57 { grid-template-columns: 1fr; }
+      .grid-3col { grid-template-columns: 1fr 1fr; }
+
+      .ga-7, .ga-5, .ga-8, .ga-4, .ga-6, .ga-12 { grid-column: span 12; }
+
+      .pull-quote { padding: 64px var(--pad); }
+      .pull-quote blockquote { font-size: clamp(22px, 6vw, 36px); }
+
+      .meta-row { flex-wrap: wrap; gap: 28px; }
+      footer { flex-direction: column; gap: 20px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-left">Kingsley Gunatillake</span>
+    <span class="nav-right">Maara</span>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       HERO
+  ══════════════════════════════════════ -->
+  <div class="hero">
+    <img src="images/Hero1.JPG" alt="Maara — Kingsley Gunatillake" loading="eager" />
+    <div class="hero-overlay"></div>
+    <div class="hero-text">
+      <span class="eyebrow">Solo Exhibition &nbsp;·&nbsp; Saskia Gallery</span>
+      <h1><em>Maara</em></h1>
+      <span class="artist-name">Kingsley Gunatillake</span>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       §1 — OPENING
+  ══════════════════════════════════════ -->
+  <section class="section fade-in">
+    <div class="text-block">
+      <div class="text-block__label">
+        Exhibition<br />Review
+      </div>
+      <div class="text-block__body">
+        <h2>Desire, Creation<br />and the Unconscious</h2>
+        <p>
+          Kingsley Gunatillake's <em>Maara</em> exhibition invites the viewer into a complex
+          and layered exploration of desire, creation, and the unconscious. With conceptual
+          audacity and aesthetic sophistication, the exhibition pushes the boundaries of
+          Gunatillake's distinct auteuristic approach, inviting contemplation on the nature
+          of human ambition, spirituality, and the psyche.
+        </p>
+        <p>
+          Drawing inspiration from his longstanding connection with Japan, especially the
+          minimalist elegance found in its cultural expressions, the exhibition's conceptual
+          seed was sown during a visit to the Sanjūsangen-dō shrine in Kyoto. There,
+          Gunatillake encountered the 1,001 statues of Kannon, which ignited the idea for
+          <em>Maara</em> — a project that would take nearly three years to materialize.
+        </p>
+
+        <div class="meta-row">
+          <div class="meta-item">
+            <span>Medium</span>
+            <strong>Bronze · Found Metal</strong>
+          </div>
+          <div class="meta-item">
+            <span>Year</span>
+            <strong>2025</strong>
+          </div>
+          <div class="meta-item">
+            <span>Venue</span>
+            <strong>Saskia Gallery</strong>
+          </div>
+          <div class="meta-item">
+            <span>Figures</span>
+            <strong>1,001</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 HIGH-QUALITY GALLERY SHOTS — moved to top position -->
+  <div class="grid-asym fade-in">
+    <div class="grid-item ga-7 ar-43" data-src="images/_DSC5521.JPG">
+      <img src="images/_DSC5521.JPG" alt="Maara — solo figurine, spotlit" loading="lazy" />
+    </div>
+    <div class="grid-item ga-5 ar-43" data-src="images/WhatsApp Image 2026-04-27 at 9.36.08 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.36.08 AM.jpeg" alt="Maara — figurine detail" loading="lazy" />
+    </div>
+    <div class="grid-item ga-6 ar-43" data-src="images/_DSC5535.JPG">
+      <img src="images/_DSC5535.JPG" alt="Maara — army on steps" loading="lazy" />
+    </div>
+    <div class="grid-item ga-6 ar-43" data-src="images/_DSC5523.JPG">
+      <img src="images/_DSC5523.JPG" alt="Maara — gallery view" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- IMAGE: wall figurines + individual close-up -->
+  <div class="grid-2col g-57 fade-in">
+    <div class="grid-item ar-34" data-src="images/_DSC5497.JPG">
+      <img src="images/_DSC5497.JPG" alt="Maara — wall figurine" loading="lazy" />
+    </div>
+    <div class="grid-item ar-34" data-src="images/WhatsApp Image 2025-03-23 at 04.49.29.jpeg">
+      <img src="images/WhatsApp Image 2025-03-23 at 04.49.29.jpeg" alt="Maara — detail" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       §2 — MĀRA REIMAGINED
+  ══════════════════════════════════════ -->
+  <section class="section fade-in">
+    <div class="text-block">
+      <div class="text-block__label">The Concept</div>
+      <div class="text-block__body">
+        <p>
+          At the core of <em>Maara</em> lies a reimagined vision of Māra, traditionally
+          conceived in Buddhist cosmology as a tempter and deceiver — the embodiment of
+          illusion and desire. However, Gunatillake recasts Māra as not merely an
+          antagonist, but as a dynamic, life-affirming force.
+        </p>
+        <p>
+          Challenging the binary of good versus evil, he contends that desire, often framed
+          as the root of suffering, is, in fact, a fundamental catalyst for human creativity
+          and purpose. For Gunatillake, Māra becomes a symbol not of malevolence but of
+          ambition — a force that drives humans to dream, innovate, and transcend.
+        </p>
+        <p>
+          Through this provocative reinterpretation, he urges the viewer to question whether
+          we should vilify desire or, instead, recognize it as the very energy that fuels
+          existence.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PULL QUOTE -->
+  <div class="pull-quote fade-in">
+    <blockquote>
+      "Desire — often framed as the root of suffering — is, in fact,
+      a fundamental catalyst for <em>human creativity and purpose.</em>"
+    </blockquote>
+  </div>
+
+  <!-- FULL BLEED — overhead army shot -->
+  <div class="img-full fade-in">
+    <img src="images/WhatsApp Image 2025-03-17 at 17.26.09.jpeg" alt="Maara — 1,001 figurines on steps" loading="lazy" />
+    <span class="img-full__caption">1,001 Figures · Saskia Gallery</span>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       §3 — THE FIGURINES
+       Split: text left | image right
+  ══════════════════════════════════════ -->
+  <div class="split fade-in">
+    <div class="split__text">
+      <span class="split-label">The Works</span>
+      <p>
+        A centerpiece of the exhibition is a series of intricate bronze figurines, each an
+        embodiment of this reinterpreted Māra. These figures fuse the aesthetics of the
+        Samurai with futuristic, mechanized motifs, evoking both the ancient and the
+        contemporary — making it simply timeless.
+      </p>
+      <p>
+        While originally conceived as a collection of 1,001 figurines, the exhibition
+        showcases all 1,001, each with its own distinct facial expression — some fierce,
+        others joyful, all brandishing a combination of traditional and modern weaponry.
+      </p>
+      <p>
+        Placed within a darkened room, mounted on steel steps and surrounded by crushed
+        stone, the figures encourage deliberate navigation. This arrangement, at once simple
+        and profound, heightens the viewer's awareness, urging them to slow down and reflect
+        on the work with mindful attention.
+      </p>
+    </div>
+    <div class="split__img grid-item" data-src="images/WhatsApp Image 2026-04-27 at 9.06.33 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.06.33 AM.jpeg" alt="Maara — figurine I" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- THREE INDIVIDUAL FIGURINES -->
+  <div class="grid-3col fade-in">
+    <div class="grid-item ar-34" data-src="images/WhatsApp Image 2026-04-27 at 9.26.04 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.26.04 AM.jpeg" alt="Maara — figurine III" loading="lazy" />
+    </div>
+    <div class="grid-item ar-34" data-src="images/WhatsApp Image 2026-04-27 at 9.27.48 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.27.48 AM.jpeg" alt="Maara — figurine IV" loading="lazy" />
+    </div>
+    <div class="grid-item ar-34" data-src="images/WhatsApp Image 2026-04-27 at 9.30.33 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.30.33 AM.jpeg" alt="Maara — figurine V" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       §4 — LIGHT & SHADOW
+  ══════════════════════════════════════ -->
+  <section class="section fade-in">
+    <div class="text-centered">
+      <span class="eyebrow">Light &amp; Shadow</span>
+      <p>
+        The paintings in <em>Maara</em> evoke the dynamic essence of Māra through both fluid
+        gestures and layered, bold strokes. Some works are defined by a singular, sweeping
+        movement, capturing the fleeting reflections and gestures of the protagonist, while
+        others are built through layers of intense brushwork, gradually revealing the
+        multifaceted nature of Māra.
+      </p>
+      <p>
+        The interplay of gold, silver, and copper hues against darker tones creates a subtle
+        dance of light and shadow, which shifts in response to the changing ambient lighting.
+        As the light fades, hidden metallic glimmers rise to the surface, reflecting the
+        concealed desires and complexities of the unconscious.
+      </p>
+      <p>
+        In this way, the paintings transcend their visual form, becoming metaphors for the
+        psyche — fluid, ever-changing, and intricately connected to the unconscious forces
+        that drive human experience.
+      </p>
+    </div>
+  </section>
+
+  <!-- ASYMMETRIC FOUR-IMAGE GRID -->
+  <div class="grid-asym fade-in">
+    <div class="grid-item ga-7 ar-43" data-src="images/WhatsApp Image 2026-04-27 at 9.30.55 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.30.55 AM.jpeg" alt="Maara — VI" loading="lazy" />
+    </div>
+    <div class="grid-item ga-5 ar-43" data-src="images/WhatsApp Image 2026-04-27 at 9.31.23 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.31.23 AM.jpeg" alt="Maara — VII" loading="lazy" />
+    </div>
+    <div class="grid-item ga-5 ar-43" data-src="images/WhatsApp Image 2026-04-27 at 9.31.41 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.31.41 AM.jpeg" alt="Maara — VIII" loading="lazy" />
+    </div>
+    <div class="grid-item ga-7 ar-43" data-src="images/WhatsApp Image 2026-04-27 at 9.33.19 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.33.19 AM.jpeg" alt="Maara — IX" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- FULL BLEED — light beam across army -->
+  <div class="img-full fade-in">
+    <img src="images/_RDP9607.JPG" alt="Maara — light across the army" loading="lazy" />
+    <span class="img-full__caption">Exhibition View</span>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       §5 — THE UNCONSCIOUS
+       Split: image left | text right
+  ══════════════════════════════════════ -->
+  <div class="split split--reverse fade-in">
+    <div class="split__text">
+      <span class="split-label">The Unconscious</span>
+      <p>
+        In <em>Maara</em>, one might also trace the influence of psychoanalytic theory,
+        particularly Freud's conception of the id — the unconscious forces of desire and
+        instinct that propel human behavior.
+      </p>
+      <p>
+        Gunatillake's portrayal of Māra as a driving, creative energy aligns with this
+        notion, suggesting that these primal impulses, though often suppressed, are
+        intrinsic to the human condition.
+      </p>
+      <p>
+        The exhibition becomes, then, a meditation on the darker, more instinctual aspects
+        of the self — forces that, while frequently misunderstood or repressed, are
+        essential to human existence.
+      </p>
+    </div>
+    <div class="split__img grid-item" data-src="images/WhatsApp Image 2025-03-17 at 17.31.04.jpeg">
+      <img src="images/WhatsApp Image 2025-03-17 at 17.31.04.jpeg" alt="Maara — viewer silhouette" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- THREE MORE FIGURINES -->
+  <div class="grid-3col fade-in">
+    <div class="grid-item ar-34" data-src="images/WhatsApp Image 2026-04-27 at 9.34.28 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.34.28 AM.jpeg" alt="Maara — X" loading="lazy" />
+    </div>
+    <div class="grid-item ar-34" data-src="images/WhatsApp Image 2026-04-27 at 9.35.21 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.35.21 AM.jpeg" alt="Maara — XI" loading="lazy" />
+    </div>
+    <div class="grid-item ar-34" data-src="images/WhatsApp Image 2026-04-27 at 9.09.54 AM.jpeg">
+      <img src="images/WhatsApp Image 2026-04-27 at 9.09.54 AM.jpeg" alt="Maara — XII" loading="lazy" />
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       §6 — SPACE & CRITIQUE
+  ══════════════════════════════════════ -->
+  <section class="section fade-in">
+    <div class="text-block">
+      <div class="text-block__label">Space &amp;<br />Constraint</div>
+      <div class="text-block__body">
+        <p>
+          Despite the conceptual depth and artistic achievement of <em>Maara</em>, the
+          exhibition's full impact is tempered by the limitations of the Saskia Gallery's
+          physical space. The gallery's constraints necessitated the display of only 800
+          figures, a reduction from the artist's original vision.
+        </p>
+        <p>
+          Moreover, the close proximity of the large-scale paintings detracted from their
+          immersive potential, creating a sense of visual congestion that interrupted the
+          meditative experience central to Gunatillake's work. The expansive, contemplative
+          qualities of the pieces demand not just space, but time for reflection — something
+          that the constrained environment was unable to fully provide.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OVERHEAD ARMY — the hero installation shot -->
+  <div class="img-full fade-in">
+    <img src="images/_RDP9603.JPG" alt="Maara — overhead installation view" loading="lazy" style="object-position: center center;" />
+    <span class="img-full__caption">1,001 Figures · Installation Detail</span>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       CONCLUSION
+  ══════════════════════════════════════ -->
+  <section class="section fade-in">
+    <div class="conclusion">
+      <span class="eyebrow">In Conclusion</span>
+      <p>
+        <em>Maara</em> is a striking showcase of Gunatillake's artistic finesse, where every
+        element of the exhibition invites reflection. The bronze figurines stand as delicate
+        yet powerful representations of Māra, merging traditional and futuristic styles in a
+        way that feels both timeless and contemporary.
+      </p>
+      <p>
+        The paintings, with their layers of gold, silver, and copper, create a shifting dance
+        of light and shadow, drawing the viewer in with every glance. The subtle changes in
+        tone and texture offer a glimpse into the hidden depths of desire and the unconscious,
+        encouraging a deeper exploration of self.
+      </p>
+      <p>
+        At its core, the exhibition reimagines Māra not as an antagonist, but as a force of
+        creativity and ambition, highlighting how desire shapes both our actions and our
+        potential. <em>Maara</em> remains a thought-provoking and immersive experience,
+        blending aesthetic beauty with philosophical depth — offering both a visual and
+        intellectual journey.
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-name">Kingsley Gunatillake</span>
+    <span class="footer-series">Maara — 2025</span>
+    <span class="footer-copy">&copy; 2025 All rights reserved</span>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="lb-close" id="lb-close">Close</button>
+    <button class="lb-nav lb-prev" id="lb-prev">&#8592; Prev</button>
+    <img id="lb-img" src="" alt="" />
+    <button class="lb-nav lb-next" id="lb-next">Next &#8594;</button>
+    <span class="lb-counter" id="lb-counter"></span>
+  </div>
+
+  <script>
+    /* ── Lightbox ── */
+    const items   = [...document.querySelectorAll('.grid-item[data-src]')];
+    const srcs    = items.map(el => el.dataset.src);
+    const lb      = document.getElementById('lightbox');
+    const lbImg   = document.getElementById('lb-img');
+    const lbCount = document.getElementById('lb-counter');
+    let current   = 0;
+
+    function openLb(idx) {
+      current = idx;
+      lbImg.src = srcs[current];
+      lbImg.alt = items[current].querySelector('img').alt;
+      lbCount.textContent = `${current + 1} / ${srcs.length}`;
+      lb.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLb() {
+      lb.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    function navLb(dir) {
+      current = (current + dir + srcs.length) % srcs.length;
+      lbImg.src = srcs[current];
+      lbImg.alt = items[current].querySelector('img').alt;
+      lbCount.textContent = `${current + 1} / ${srcs.length}`;
+    }
+
+    items.forEach((el, i) => el.addEventListener('click', () => openLb(i)));
+    document.getElementById('lb-close').addEventListener('click', closeLb);
+    document.getElementById('lb-prev').addEventListener('click',  () => navLb(-1));
+    document.getElementById('lb-next').addEventListener('click',  () => navLb(1));
+    lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('active')) return;
+      if (e.key === 'Escape')     closeLb();
+      if (e.key === 'ArrowLeft')  navLb(-1);
+      if (e.key === 'ArrowRight') navLb(1);
+    });
+
+    /* ── Fade-in on scroll ── */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 50);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.06 });
+
+    document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>

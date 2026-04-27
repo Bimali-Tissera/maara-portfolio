@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh --version)",
+      "Bash(git --version)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git count-objects:*)",
+      "Bash(git gc:*)",
+      "Bash(git config:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(git reflog:*)",
+      "Bash(find images/ -size +10M -exec ls -lh {})",
+      "Bash(sort -k5 -rh)",
+      "Bash(git lfs:*)",
+      "Bash(git rm:*)",
+      "Bash(git remote:*)",
+      "Bash(magick -version)",
+      "Bash(convert -version)",
+      "Bash(node -e \"require\\(''sharp''\\)\")",
+      "Bash(python3 -c \"from PIL import Image; print\\(''Pillow available''\\)\")",
+      "Bash(python -c \"from PIL import Image; print\\(''Pillow available''\\)\")",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "WebFetch(domain:maara-portfolio-two.vercel.app)"
+    ]
+  }
+}
